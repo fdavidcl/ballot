@@ -4,3 +4,4 @@ govbench
 .RData
 .Rhistory
 Rout
+!sample_results/*

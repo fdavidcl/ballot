@@ -1,0 +1,33 @@
+==== RESULTADOS DEL TEST ANOVA ====
+            Df    Sum Sq   Mean Sq F value   Pr(>F)    
+governor     3 3.583e+20 1.194e+20    1071 9.37e-11 ***
+Residuals    8 8.925e+17 1.116e+17                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+==== COMPARACIÓN POR PAREJAS ====
+
+ Pairwise comparisons using t tests with pooled SD 
+
+data:  twocol$time and twocol$governor 
+
+            conservative ondemand performance
+ondemand    7.0e-06      -        -          
+performance 4.2e-06      0.49     -          
+powersave   2.5e-10      3.7e-11  3.3e-11    
+
+P value adjustment method: none 
+
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = time ~ governor, data = twocol, contrasts = c("performance", "powersave"))
+
+$governor
+                                diff         lwr         upr     p adj
+ondemand-conservative    -2799607249 -3672926725 -1926287772 0.0000325
+performance-conservative -2995926191 -3869245668 -2122606715 0.0000196
+powersave-conservative   10387543742  9514224266 11260863219 0.0000000
+performance-ondemand      -196318943 -1069638419   677000533 0.8865072
+powersave-ondemand       13187150991 12313831515 14060470467 0.0000000
+powersave-performance    13383469934 12510150457 14256789410 0.0000000
