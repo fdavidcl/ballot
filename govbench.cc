@@ -12,8 +12,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// cores
-//#include <thread>
+// cores, sleep
+#include <thread>
 
 // chrono
 #include <chrono>
@@ -51,6 +51,7 @@ private:
 /*
     Other private members
 */
+    unsigned int num_cores;
     bool intel_pstate_enabled;
     
     /**
@@ -76,7 +77,8 @@ public:
      *
      * Constructor. Comprueba si Intel P-state está activado
      */
-    GovernorBenchmark() {
+    GovernorBenchmark() 
+        :num_cores(std::thread::hardware_concurrency()) {
         check_intel_pstate();
     }
     
