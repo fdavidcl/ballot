@@ -1,1 +1,6 @@
 govbench
+*.csv
+*.png
+.RData
+.Rhistory
+Rout
