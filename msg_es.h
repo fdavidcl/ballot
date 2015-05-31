@@ -5,6 +5,11 @@
 
 using std::string;
 
+/**
+ * Incluir este archivo para disponer
+ * de interacción con el usuario en 
+ * español
+ */
 namespace Message {
     const string WARNING = "==== AVISO ====",
                  ERROR   = "==== ERROR ====";
@@ -28,7 +33,7 @@ namespace Message {
 " Hubo un problema al modificar el 'scaling governor'."
     ;
     string USING_GOV(string gov) {
-        return " \e[1mPasando a usar el governor " + gov + "\e[m";
+        return " Pasando a usar el governor \e[1m" + gov + "\e[m";
     }
 }
 

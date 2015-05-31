@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 
+// misc.
+#include <vector>
 #include <limits>
 
 // stat
@@ -11,7 +13,10 @@
 #include <unistd.h>
 
 // cores
-#include <thread>
+//#include <thread>
+
+// chrono
+#include <chrono>
 
 // localization
 #include "msg_es.h"
@@ -24,7 +29,16 @@ using std::cerr;
 using std::cin;
 using std::endl;
 using std::string;
+using std::vector;
 
+/**
+ * Clase GovernorBenchmark
+ * 
+ * Contiene los métodos necesarios para alteración
+ * del governor y ejecución de una batería de pruebas
+ * proporcionada por objetos de PerformanceTest
+ *
+ */
 class GovernorBenchmark {
 private:
 /*  
@@ -38,8 +52,13 @@ private:
     Other private members
 */
     bool intel_pstate_enabled;
-    unsigned int num_cores;
     
+    /**
+     * check_intel_pstate
+     *
+     * Busca el directorio de sistema de Intel P-state para 
+     * comprobar si está en uso
+     */
     void check_intel_pstate() {
     /*
         Intel P-state is being used if the directory pointed
@@ -52,11 +71,21 @@ private:
     }
 
 public:
-    GovernorBenchmark() 
-        :num_cores(std::thread::hardware_concurrency()) {
+    /**
+     * GovernorBenchmark
+     *
+     * Constructor. Comprueba si Intel P-state está activado
+     */
+    GovernorBenchmark() {
         check_intel_pstate();
     }
     
+    /**
+     * set_governor
+     * @param name Nombre del governor
+     *
+     * Modifica el governor en uso por la CPU
+     */
     bool set_governor(string name) {
         bool success = true;
         
@@ -71,7 +100,20 @@ public:
         return success;
     }
     
+    /**
+     * benchmark
+     *
+     * Método que realiza las ejecuciones de las
+     * tareas de PerformanceTest para conformar el
+     * benchmark
+     */
     int benchmark() {
+    /*
+        Ejecutamos tests para cada governor:
+            * Cálculos largos
+            * Cálculos medianos separados por tiempo corto de 'sleep'
+            * Cálculos pequeños separados por tiempo largo de 'sleep'
+    */
         for (auto& current_gov : AVAIL_GOVERNORS) {
             cerr << Message::USING_GOV(current_gov) << endl;
             
@@ -80,13 +122,36 @@ public:
                 return -1;
             }
             
-            int limit = 1000000000;
+            int maxlimit = 1000000000;
             
-            IntPerformanceTest pruebasint(limit);
-            //pruebasint.run();
+            for (int div = 1; div <= 100; div *= 10) {
+                int limit = maxlimit / div;
             
-            FloatPerformanceTest pruebasfloat(limit);
-            pruebasfloat.run();
+                vector<PerformanceTest*> pruebas;
+    /*
+                Añadimos un test de enteros y uno de coma flotante
+    */
+                pruebas.push_back(new IntPerformanceTest(limit));
+                pruebas.push_back(new FloatPerformanceTest(limit));
+            
+                for (auto& test : pruebas) {
+                    long long int totalns = 0;
+                    
+                    for (int nump = 0; nump < div; nump++) {
+                        auto start = std::chrono::high_resolution_clock::now();
+                        test->run();
+                        auto stop = std::chrono::high_resolution_clock::now();
+                        
+                        totalns += std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
+                    
+                        std::this_thread::sleep_for(std::chrono::milliseconds(div*20));
+                    }
+                
+                    cout << totalns << "," << std::flush;
+                }
+            }
+            
+            cout << endl << std::flush;
         }
         
         return 0;
@@ -95,15 +160,15 @@ public:
     bool using_intel_pstate() {
         return intel_pstate_enabled;
     }
-    
-    unsigned int cores() {
-        return num_cores;
-    } 
 };
 
-/*
-Helper function for user interaction
-*/
+/**
+ * confirm
+ * @param initial Valor por defecto (sí/no)
+ *
+ * Función que permite pedir al usuario que elija
+ * entre sí/no, con una opción activada por defecto
+ */
 bool confirm(bool initial) {
     char confirmation;
     bool correct_input = false;
@@ -124,6 +189,12 @@ bool confirm(bool initial) {
     return confirmation == Message::CHAR_Y;
 }
 
+/**
+ * run_benchmark
+ *
+ * Se encarga de comprobar lo necesario e interactuar
+ * con el usuario para ejecutar el benchmark
+ */
 int run_benchmark() {
     GovernorBenchmark bench;
     
@@ -135,14 +206,18 @@ int run_benchmark() {
             return -1;
         }
     }
-    else {
-    }
     
     bench.benchmark();
     
     return 0;
 }
 
+/**
+ * main
+ *
+ * Únicamente comprueba que el usuario actual
+ * sea root. Ejecuta la función run_benchmark.
+ */
 int main(int argc, char* argv[]) {
 #ifndef DEVELOPMENT
     if (getuid() != 0) {
@@ -153,3 +228,9 @@ int main(int argc, char* argv[]) {
     
     return run_benchmark();
 }
+
+/**
+ * Otras posibles tareas:
+ *  - Generar varios PerformanceTests en distintas hebras
+ *  - Medidas de batería: /sys/bus/acpi/drivers/battery/PNP0C0A:00/power_supply/BAT1
+**/
