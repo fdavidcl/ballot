@@ -1,4 +1,4 @@
-Governor Benchmark
+ballot
 ===========================
 
 Programa para la medición del rendimiento de distintos *governors* sobre
