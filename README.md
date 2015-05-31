@@ -36,3 +36,7 @@ gráfica de resultados.
 En el directorio `sample_results` se proveen unos archivos de resultados de
 ejemplo, obtenidos a partir de la ejecución del programa sobre una misma 
 máquina. 
+
+## Licencia
+¡Ballot es software libre! Se distribuye bajo los términos de la 
+[Mozilla Public License](https://www.mozilla.org/MPL/)
