@@ -65,36 +65,36 @@ de cuatro *governors* distintos:
 
 ## Diseño del *benchmark*
 
-  Para comprobar la efectividad de cada uno de estos governors en cuanto a la
-  realización de tareas de cómputo, se ha desarrollado un *benchmark* que ejecuta
-  tanto tareas largas continuas como pequeñas tareas separadas por tiempo de
-  descanso de la CPU, para así ver cómo se comportan los *governors* dinámicos.
+Para comprobar la efectividad de cada uno de estos governors en cuanto a la
+realización de tareas de cómputo, se ha desarrollado un *benchmark* que ejecuta
+tanto tareas largas continuas como pequeñas tareas separadas por tiempo de
+descanso de la CPU, para así ver cómo se comportan los *governors* dinámicos.
 
-  El benchmark se compondrá de dos tareas de longitud variable, que se ejecutarán
-  varias veces con varias longitudes:
+El benchmark se compondrá de dos tareas de longitud variable, que se ejecutarán
+varias veces con varias longitudes:
 
-    * Cálculo de elementos de la sucesión de Fibonacci: para testear las operaciones
-    sobre números enteros.
-    * Cálculo de aproximaciones a τ (=2π): se utiliza la aproximación mediante
-    [la serie de Leibniz](https://proofwiki.org/wiki/Leibniz%27s_Formula_for_Pi),
-    testeando por tanto operaciones en coma flotante.
+  * Cálculo de elementos de la sucesión de Fibonacci: para testear las operaciones
+  sobre números enteros.
+  * Cálculo de aproximaciones a τ (=2π): se utiliza la aproximación mediante
+  [la serie de Leibniz](https://proofwiki.org/wiki/Leibniz%27s_Formula_for_Pi),
+  testeando por tanto operaciones en coma flotante.
 
-  Una vez escogido uno de los *governors*, en primer lugar, se ejecutarán 1000000000
-  iteraciones de cada tarea de forma continua. A continuación, se ejecutará 10 veces
-  la tarea con un décimo de carga (100000000 iteraciones), separadas por un tiempo de
-  descanso de 200 milisegundos. Por último, se repetirá cada tarea 100 veces con un
-  número de iteraciones de 10000000, y un tiempo de inactividad intermedio de 2
-  segundos.
+Una vez escogido uno de los *governors*, en primer lugar, se ejecutarán 1000000000
+iteraciones de cada tarea de forma continua. A continuación, se ejecutará 10 veces
+la tarea con un décimo de carga (100000000 iteraciones), separadas por un tiempo de
+descanso de 200 milisegundos. Por último, se repetirá cada tarea 100 veces con un
+número de iteraciones de 10000000, y un tiempo de inactividad intermedio de 2
+segundos.
 
-  Para cada tarea de cálculo, se registra la suma de tiempo de todas las veces que se
-  ejecuta, sin contar el tiempo de inactividad. Es decir, para la tarea que se repite
-  10 veces, se calcula el tiempo que se tarda en ejecutar cada vez y se suman. Puesto
-  que lo único que hay al empezar a contar tiempo es la llamada a la función de cálculo,
-  y tras terminar se deja de contar el tiempo, este no estará influenciado por ningún
-  otro comportamiento del programa.
+Para cada tarea de cálculo, se registra la suma de tiempo de todas las veces que se
+ejecuta, sin contar el tiempo de inactividad. Es decir, para la tarea que se repite
+10 veces, se calcula el tiempo que se tarda en ejecutar cada vez y se suman. Puesto
+que lo único que hay al empezar a contar tiempo es la llamada a la función de cálculo,
+y tras terminar se deja de contar el tiempo, este no estará influenciado por ningún
+otro comportamiento del programa.
 
-  Este procedimiento se realiza para cada *governor* y el programa completo se repite
-  3 veces, para recoger suficientes datos de tiempo, minimizando así el posible ruido.
+Este procedimiento se realiza para cada *governor* y el programa completo se repite
+3 veces, para recoger suficientes datos de tiempo, minimizando así el posible ruido.
 
 
 ## Licencia
